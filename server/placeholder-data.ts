@@ -1,4 +1,4 @@
-import type { Contact, Message } from "~/types"
+import type { Contact, Message, User } from "~/types"
 
 export const contacts: Contact[] = [
     {
@@ -39,3 +39,30 @@ export const messages: Message[] = [
         date: new Date(2024, 9, 17, 20, 5, 0).toISOString(),
     }
 ];
+
+
+
+export const users: User[] = [
+    {
+        id: 1,
+        name: 'Conor McGregor',
+        nickname: '@thenotorious',
+        password: '12345'
+    },{
+        id: 2,
+        name: 'Bruce Lee',
+        nickname: '@brucelee',
+        password: '12345'
+    },{
+        id: 3,
+        name: 'Jon Jones',
+        nickname: '@jonbones',
+        password: '12345'
+    },
+    {
+        id: 4,
+        name: 'Zabit Magomedsharipov',
+        nickname: '@zabit',
+        password: '12345',
+    }
+]

@@ -1,9 +1,9 @@
 <script lang="ts" setup>    
-
+import { websocketUrl } from '~/constants';
 let ws: WebSocket;
 
 if(import.meta.client) {
-    ws = new WebSocket('ws://localhost:3000/_ws');
+    ws = new WebSocket(websocketUrl);
 }
 
 

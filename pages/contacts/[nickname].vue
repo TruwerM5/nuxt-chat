@@ -3,6 +3,10 @@ import type { Contact, Message } from '~/types';
 import ConnectionClient from '~/components/Connection.client.vue';
 import ContactInfoVueClient from '~/components/ContactInfoVue.vue';
 
+definePageMeta({
+    pageTransition: false,
+})
+
 const route = useRoute();
 const nickname = computed(() => route.params.nickname);
 const contact = ref<Contact | null>();

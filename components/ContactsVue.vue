@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import type { Contact } from '~/types';
+import { authUserNickname } from '~/constants';
 
 const emits = defineEmits(['hide-nav']);
 const searchString = ref('');
 const contacts = ref<Contact[] | null>([]);
 const filteredContacts = ref<Contact[]>([]);
-const { data } = await useFetch<Contact[]>('/api/contacts');
+const { data } = await useFetch<Contact[]>(`/api/contacts?exclude=${authUserNickname}`);
 if(data.value) {
     contacts.value = data.value;
     filteredContacts.value = contacts.value;

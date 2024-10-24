@@ -4,9 +4,6 @@ import { toggleNav } from '~/stores/useNavStore';
 
 const props = defineProps<{contact: Contact}>();
 
-function showNav() {
-    toggleNav();
-}
 
 </script>
 

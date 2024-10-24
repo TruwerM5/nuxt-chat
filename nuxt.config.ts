@@ -8,14 +8,20 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxtjs/google-fonts',
     '@nuxt/image',
-    '@nuxt/icon'
+    '@nuxt/icon',
+    '@prisma/nuxt',
+    '@pinia/nuxt',
   ],
-
+  runtimeConfig: {
+    saltRounds: 13
+  },
   app: {
     head: {
       title: 'Nuxt Chat',
       meta: [{charset: 'utf-8'}]
-    }
+    },
+    pageTransition: { name: 'auth', mode: 'out-in' },
+    
   },
 
   googleFonts: {

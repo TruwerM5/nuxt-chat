@@ -77,3 +77,28 @@
     bottom: 50%;
     transform: rotate(-45deg) translateY(50%);
 }
+
+.chat-textarea {
+    overflow: visible;
+    resize: none;
+}
+
+.chat-textarea::-webkit-scrollbar {
+    display: none;
+}
+
+.chat-leave-active,
+.chat-enter-active,
+.chat-move {
+    transition: all .3s;
+}
+
+.chat-leave-active {
+    position: absolute;
+}
+
+.chat-enter-from,
+.chat-leave-to {
+    opacity: 0;
+    transform: translateX(60px);
+}

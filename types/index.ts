@@ -2,8 +2,8 @@ export type Contact = {
     id: number;
     nickname: string;
     name: string;
-    avatar: string;
-}
+    avatar?: string;
+};
 
 export type Message = {
     id: number;
@@ -11,4 +11,9 @@ export type Message = {
     to_user_nickname: string;
     message: string;
     date: string;
-}
+};
+
+export type User = Contact & {
+    password: string;
+    messages?: Message[];
+};

@@ -7,9 +7,9 @@ export default defineEventHandler(async (event) => {
 
     
 
-    await new Promise((resolve, reject) => {
-        setTimeout(() => resolve('done'), 3000);
-    });
+    // await new Promise((resolve, reject) => {
+    //     setTimeout(() => resolve('done'), 3000);
+    // });
 
     return await messages.filter(message => 
         (message.from_user_nickname == from && message.to_user_nickname == to) ||

@@ -9,7 +9,7 @@ const isActive = useNavStore();
 
 <template>
     <header 
-      :class="['absolute w-full h-full z-40 bg-white md:block md:relative md:col-span-2 border-b border-solid border-zinc-800 md:border-r md:border-b-0',
+      :class="['absolute overflow-hidden w-full h-full z-40 bg-white md:block md:relative md:col-span-2 border-b border-solid border-zinc-800 md:border-r md:border-b-0',
         isActive ? 'block' : 'hidden'
       ]"
     >
@@ -41,5 +41,12 @@ const isActive = useNavStore();
           :class="['bg-white absolute w-full top-[70px] z-10 md:block', isActive ? 'block' : 'hidden']" 
           @hide-nav="toggleNav"
         />
+        <NuxtLink 
+          to="/auth/signup" 
+          class="absolute w-full bottom-4 left-4 text-primary flex items-center justify-center gap-2 text-xl transition-colors hover:text-primary-dark"
+        >
+          Log Out
+          <Icon name="material-symbols:login" class="text-2xl" />
+        </NuxtLink>
     </header>
 </template>

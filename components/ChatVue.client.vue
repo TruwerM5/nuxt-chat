@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 
+import { websocketUrl } from '~/constants';
 import type { Message } from '~/types';
 import { getTimeFromIsoString } from '~/utils/getTime';
 
@@ -7,13 +8,43 @@ const props = defineProps<{messages: Message[] | [], user_nickname: string}>();
 const messages = ref<Message[]>([]);
 const message = ref('');
 const messagesRef = useTemplateRef('messageRef');
+const textareaRef = useTemplateRef('textareaRef');
+
+let ws = new WebSocket(websocketUrl);
+ws.addEventListener('open', (event) => {
+    console.log('Connected...', event);
+});
+ws.addEventListener('message', async (event) => {
+  // const message = await event.data.json().message;
+  const data = await event.data.text();
+  const json = JSON.parse(data);
+  if(json.message) {
+    messages.value.push(json.message);
+    scrollMessages();
+  } 
+});
+
 messages.value = props.messages;
 
 async function sendMessage() {
+  
+  
   if(!message.value) {
     console.log('Type a message');
     return;
   }
+
+  let msgObject: Message = {
+    from_user_nickname: '@zabit',
+    to_user_nickname: '@thenotorious',
+    id: 22,
+    message: message.value,
+    date: new Date().toISOString()
+  }
+
+  ws.send(JSON.stringify(msgObject));
+  
+
   const req = await $fetch('/api/messages/send-message', {
     method: 'POST',
     headers: {
@@ -33,8 +64,9 @@ async function sendMessage() {
     message.value = '';
     
     scrollMessages();
-    
+    resizeTextarea();
   }
+  
 }
 
 onMounted(() => {
@@ -49,6 +81,22 @@ function scrollMessages() {
   })
 }
 
+function resizeTextarea() {
+  if(!textareaRef.value) {
+    return
+  }
+
+  if(!message.value) {
+    textareaRef.value.style.maxHeight = '44px';
+    return;  
+  }
+  
+  textareaRef.value.style.maxHeight = textareaRef.value.scrollHeight + 'px';
+  textareaRef.value.style.height = textareaRef.value.scrollHeight + 'px';
+  
+  
+    
+}
 
 </script>
 
@@ -57,18 +105,21 @@ function scrollMessages() {
 
       <div v-if="messages.length > 0" class="messages relative max-h-full overflow-scroll scroll-smooth" ref="messageRef">
         <div class="px-12 py-[110px] ">
-          <div
+          <TransitionGroup name="chat">
+            <div
             v-for="message in messages" :key="message.id"
-            :class="['bg-zinc-700 py-2 px-4 text-white w-fit rounded-md message mb-4',
+            :class="['max-w-[40%] bg-zinc-700 py-2 px-4 text-white w-fit rounded-md message mb-4 break-all',
               {
                 'message_from ml-auto': message.from_user_nickname == user_nickname,
                 'message_to mr-auto': message.from_user_nickname != user_nickname
               }
             ]"
           >
-            <p class="text-lg">{{ message.message }}</p>
-            <p class="w-fit ml-auto">{{ getTimeFromIsoString(message.date) }}</p>
-          </div>
+              <p class="text-lg">{{ message.message }}</p>
+              <p class="w-fit ml-auto">{{ getTimeFromIsoString(message.date) }}</p>
+            </div>
+          </TransitionGroup>
+          
         </div>
         
       </div>
@@ -77,19 +128,20 @@ function scrollMessages() {
       </div>
         
         <div class="absolute bottom-0 left-0 bg-white max-h-[200px]
-        flex gap-2 w-full border-t border-solid border-zinc-800 px-2 py-2">
-        <div class="relative flex-1">
+        flex items-center gap-2 w-full border-t border-solid border-zinc-800 px-2 pt-2 pb-6">
+        <div class="relative flex-1 h-[44px]">
           <label for="new_message" aria-hidden="true" class="hidden">New message</label>
-          <input 
-            type="text" 
+          <textarea
             name="new_message" 
             id="new_message" 
             v-model="message"
             placeholder="New message"
-            class="pl-12 py-2 rounded-md w-full
+            class="chat-textarea pl-12 p-2 rounded-md w-full
             bg-zinc-200 text-lg focus:outline-primary 
-            focus:bg-white transition-colors peer"
-          />
+            focus:bg-white transition-colors peer h-full"
+            ref="textareaRef"
+            @keydown="resizeTextarea"
+          ></textarea>
           <Icon 
             name="material-symbols:mail" 
             class="absolute left-2 top-1/2 -translate-y-1/2 
