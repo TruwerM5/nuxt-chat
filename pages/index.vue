@@ -2,6 +2,9 @@
 
 import { useNavStore, toggleNav } from '~/stores/useNavStore';
 
+definePageMeta({
+    middleware: 'auth',
+});
 
 </script>
 

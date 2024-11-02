@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import {nodePolyfills} from 'vite-plugin-node-polyfills';
 export default defineNuxtConfig({
   css: ['@/assets/style.css'],
   compatibilityDate: '2024-04-03',
@@ -12,8 +13,10 @@ export default defineNuxtConfig({
     '@prisma/nuxt',
     '@pinia/nuxt',
   ],
+
   runtimeConfig: {
-    saltRounds: 13
+    saltRounds: 13,
+    JWT_SECRET: 'Vy7YsOGTc4Aem26Im5lILQ'
   },
   app: {
     head: {

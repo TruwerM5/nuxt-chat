@@ -1,5 +1,7 @@
 import prisma from "~/lib/prisma";
 import * as bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
 type SignUpBody = {
     nickname: string;
     name: string;
@@ -30,8 +32,16 @@ export default defineEventHandler(async (event) => {
                 password: hash,
             }
         });
-        return {user};
+        const {password, ...payload} = user;
+        const token = await jwt.sign(payload, runtimeConfig.JWT_SECRET,{expiresIn: '1m'});
+        // setCookie(event, 'jwt', token, {
+        //     httpOnly: true,
+        //     sameSite: true,
+        // });
+        console.log(token);
+        return { user };
     } catch(e: any) {
+        
         throw createError({
             message: 'Server Error' + e.message,
             status: 500

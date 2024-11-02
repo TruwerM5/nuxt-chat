@@ -12,10 +12,11 @@ const loginData = reactive({
     password: '',
 });
 
-const status = ref<'pending' | 'success' | 'error' | 'inactive'>('inactive');
 const errorMessage = ref('');
 const showAlert = ref(false);
 async function login() {
+
+    showAlert.value = false;
 
     try {
         const req = await $fetch('/api/auth/login', {
@@ -27,20 +28,15 @@ async function login() {
         });
         if(req.user) {
             console.log('Logged in');
-            status.value = 'success';
         }
     } catch(e: any) {
         console.log(e);
-        console.log("Error: ", e);
-        status.value = 'error';
-        errorMessage.value = e.message;
+        console.log("Error: ", e.statusMessage);
+        
+        errorMessage.value = e.statusMessage;
     }
 
     showAlert.value = true;
-    setTimeout(() => {
-        showAlert.value = false;
-    }, 5000);
-
 }
 
 </script>
@@ -90,7 +86,6 @@ async function login() {
             </div>
             <UiPrimaryButtonVue text="Log In" @click="login" />
         </form>
-        <UiAlertVue v-if="status == 'success'" message="Logged in" :status="status" :show-alert="showAlert" />
-        <UiAlertVue v-if="status == 'error'" :message="errorMessage" :status="status" :show-alert="showAlert" />
+        <UiAlertVue v-if="showAlert" :message="errorMessage" :show-alert="showAlert" />
     </div>
 </template>
