@@ -7,13 +7,16 @@ export default defineEventHandler(event => {
     if(!token) {
         throw createError({
             status: 401,
-            message: 'Token is not provided',
+            statusCode: 401,
+            message: 'Token is not provided',   
+            statusMessage: 'Token is not provided'
         });
     }
 
     try {
-        const jwtToken = jwt.verify(token, runtimeConfig.JWT_SECRET);
-        return {authenticated: true, token: jwtToken};
+        const user = jwt.verify(token, runtimeConfig.JWT_SECRET);
+        
+        return { authenticated: true, user };
     } catch(e: any) {
         throw createError({
             statusCode: 401,

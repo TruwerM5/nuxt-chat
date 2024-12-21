@@ -1,6 +1,8 @@
 import prisma from "~/lib/prisma";
 import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { createJwtToken } from "~/server/utils/jwt";
+import { Prisma } from "@prisma/client";
 
 type SignUpBody = {
     nickname: string;
@@ -13,10 +15,10 @@ export default defineEventHandler(async (event) => {
     const runtimeConfig = useRuntimeConfig();
     const body = await readBody<SignUpBody>(event);
     
-    if(!body) {
+    if(!body.nickname || !body.password) {
         throw createError({
-            message: 'Invalid data',
-            status: 400
+            statusMessage: 'Credentials not provided.',
+            status: 403
         })
     };
 
@@ -33,18 +35,25 @@ export default defineEventHandler(async (event) => {
             }
         });
         const {password, ...payload} = user;
-        const token = await jwt.sign(payload, runtimeConfig.JWT_SECRET,{expiresIn: '1m'});
-        // setCookie(event, 'jwt', token, {
-        //     httpOnly: true,
-        //     sameSite: true,
-        // });
-        console.log(token);
+        const token = createJwtToken(payload);
+
+        setCookie(event, 'jwt', token, {
+            httpOnly: true,
+            sameSite: true,
+        });
+        
         return { user };
     } catch(e: any) {
+        if(e instanceof Prisma.PrismaClientKnownRequestError) {
+            if(e.code === 'P2002') {
+                throw createError({
+                    statusMessage: `User ${body.nickname} already exists.`,
+                    status: 400,
+                    statusCode: 400,
+                });
+            }
+            
+        }
         
-        throw createError({
-            message: 'Server Error' + e.message,
-            status: 500
-        });
     }
 });

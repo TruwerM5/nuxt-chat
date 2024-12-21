@@ -1,5 +1,4 @@
-import { contacts } from "../../placeholder-data";
-
+import prisma from "~/lib/prisma";
 
 export default defineEventHandler(async (event) => {
     const nickname = event.context.params?.nickname;
@@ -7,7 +6,16 @@ export default defineEventHandler(async (event) => {
         throw new Error('User not found')
     };
     try {
-        return await contacts.find(contact => contact.nickname == nickname);
+        return await prisma.user.findUnique({
+            where: {
+                nickname
+            },
+            select: {
+                avatar: true,
+                name: true,
+                nickname: true,
+            }
+        })
     } catch (err: any) {
         console.log('error');
         throw new Error(err.message);

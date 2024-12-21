@@ -12,7 +12,22 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@prisma/nuxt',
     '@pinia/nuxt',
+    '@vee-validate/nuxt',
+    'nuxt-file-storage'
   ],
+  fileStorage: {
+    mount: process.env.mount
+  },
+
+  veeValidate: {
+    autoImports: true,
+    componentNames: {
+      Form: 'VeeForm',
+      Field: 'VeeField',
+      FieldArray: 'VeeFieldArray',
+      ErrorMessage: 'VeeErrorMessage',
+    }
+  },
 
   runtimeConfig: {
     saltRounds: 13,
@@ -37,7 +52,7 @@ export default defineNuxtConfig({
   icon: {
     serverBundle: {
       
-      collections: ['vscode-icons', 'material-symbols', 'uiw']
+      collections: ['vscode-icons', 'material-symbols', 'uiw', 'line-md']
     }
   },
 

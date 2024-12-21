@@ -1,16 +1,20 @@
 <script lang="ts" setup>
 import type { Contact } from '~/types';
-import { authUserNickname } from '~/constants';
+import { useCurrentUserStore } from '~/stores/current-user';
+
 
 const emits = defineEmits(['hide-nav']);
+const currentUser = useCurrentUserStore();
 const searchString = ref('');
 const contacts = ref<Contact[] | null>([]);
-const filteredContacts = ref<Contact[]>([]);
-const { data } = await useFetch<Contact[]>(`/api/contacts?exclude=${authUserNickname}`);
+
+const { data } = await useFetch<Contact[]>(`/api/contacts`);
+const filteredContacts = ref<Contact[]>([]); 
 if(data.value) {
     contacts.value = data.value;
-    filteredContacts.value = contacts.value;
+    filteredContacts.value = contacts.value.filter(item => item.nickname != currentUser.user.nickname);
 }
+
 function onChange() {
     if(!contacts.value) return;
 
@@ -48,29 +52,12 @@ function onChange() {
         <ul v-if="filteredContacts.length > 0"
             class="flex flex-col"
         >
-            <li  
-              v-for="contact in filteredContacts" :key="contact.id"
-              class="p-3 border-b border-solid border-zinc-600 hover:bg-zinc-200"
-            >
-                <NuxtLink 
-                  :to="{path: `/contacts/${contact.nickname}`}"
-                  @click="$emit('hide-nav')"
-                  class="flex items-center gap-2"
-                >
-                <img
-                    :src="`${contact.avatar}`" 
-                    :alt="contact.name"
-                    width="50"
-                    height="50"
-                    class="rounded-full object-cover object-center w-[50px] h-[50px]" 
-                    
-                />
-                    <span class="flex flex-col relative overflow-hidden">
-                        <p class="text-lg whitespace-pre overflow-ellipsis">{{ contact.name }}</p>
-                        <p class="text-zinc-600 text-sm">{{ contact.nickname }}</p>
-                    </span>
-                </NuxtLink>
-            </li>
+            <UiContactItemVue 
+                v-for="contact in filteredContacts" 
+                :contact="contact" 
+                :key="contact.id" 
+                @click="$emit('hide-nav')"
+            />
         </ul>
     </div>
 </template>

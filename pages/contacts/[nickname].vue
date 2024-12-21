@@ -1,19 +1,22 @@
 <script lang="ts" setup>
 import type { Contact, Message } from '~/types';
-import ConnectionClient from '~/components/Connection.client.vue';
-import ContactInfoVueClient from '~/components/ContactInfoVue.vue';
+// import ConnectionClient from '~/components/Connection.client.vue';
+// import ContactInfoVueClient from '~/components/ContactInfoVue.vue';
+import { useCurrentUserStore } from '~/stores/current-user';
 
 definePageMeta({
     pageTransition: false,
-})
+    middleware: 'auth',
+});
 
+const currentUser = useCurrentUserStore();
 const route = useRoute();
 const nickname = computed(() => route.params.nickname);
 const contact = ref<Contact | null>();
 
 
 const { data } = await useFetch<Contact>(`/api/contacts/${nickname.value}`);
-const from_user_nickname = '@zabit';
+const from_user_nickname = currentUser.user.nickname;
 const messageUrl = `/api/messages/messages?from=${from_user_nickname}&to=${nickname.value}`;
 const {data: messages} = await useFetch<Message[]>(messageUrl);
 if(data) {
@@ -29,13 +32,7 @@ if(data) {
         </div>
         <!-- <ConnectionClient /> -->
         <div class="h-full">
-            
-                <ChatVue :messages="messages || []" :user_nickname="from_user_nickname" />
-           
-           
-                
-           
-            
+            <ChatVue :messages="messages || []" :user_nickname="from_user_nickname" />
         </div>
         
     </div>

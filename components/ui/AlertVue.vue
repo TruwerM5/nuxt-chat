@@ -31,7 +31,6 @@ onMounted(() => {
   isActive.value = props.showAlert;
   progressBar.value = 0;
   timerId.value = null;
-  console.log('Mounted');
   if(isActive.value) {
     startAlert();
   }
@@ -44,7 +43,7 @@ onMounted(() => {
 <template>
     <div
       v-if="isActive"
-      class="fixed top-4 right-4 w-[300px] p-4 h-[75px] bg-white rounded-md overflow-hidden shadow-md"
+      class="fixed top-4 right-4 w-[300px] p-4  bg-white rounded-md overflow-hidden shadow-md"
     >
         <button 
           @click="isActive = false"

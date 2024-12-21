@@ -15,6 +15,7 @@ model User {
   id    Int     @id @default(autoincrement())
   nickname String  @unique
   name  String
+  avatar String @default("")
   password String
   messagesFrom Message[] @relation("FromMessages")
   messagesTo Message[] @relation("ToMessages")

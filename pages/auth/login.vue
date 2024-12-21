@@ -1,23 +1,29 @@
 <script lang="ts" setup>
+import { useCurrentUserStore } from '~/stores/current-user';
 
 definePageMeta({
     layout:'auth',
     pageTransition: {
         name: 'auth'
-    }
+    },
+    middleware: 'authenticated' //if user is authenticated navigate to index page
 });
+
+const currentUser = useCurrentUserStore();
 
 const loginData = reactive({
-    nickname: '',
-    password: '',
+    bodyNickname: '',
+    bodyPassword: '',
 });
-
+const router = useRouter();
 const errorMessage = ref('');
 const showAlert = ref(false);
+const pending = ref(false);
+
 async function login() {
-
+    pending.value = true;
     showAlert.value = false;
-
+    
     try {
         const req = await $fetch('/api/auth/login', {
             method: 'POST',
@@ -27,16 +33,18 @@ async function login() {
             body: loginData,
         });
         if(req.user) {
-            console.log('Logged in');
+            currentUser.setCurrentUser(req.user);
+            router.push('/');
+            
         }
     } catch(e: any) {
-        console.log(e);
-        console.log("Error: ", e.statusMessage);
         
         errorMessage.value = e.statusMessage;
-    }
+        showAlert.value = true;
 
-    showAlert.value = true;
+    }
+    pending.value = false;
+
 }
 
 </script>
@@ -58,7 +66,7 @@ async function login() {
                   type="text" 
                   name="nickname" 
                   id="nickname" 
-                  v-model="loginData.nickname"
+                  v-model="loginData.bodyNickname"
                   class="bg-zinc-200 py-2 pl-8 rounded-md focus:bg-white peer focus:outline-primary transition-colors"
                   placeholder="Nickname"
                   autocomplete="username"
@@ -74,7 +82,7 @@ async function login() {
                   type="password" 
                   name="password" 
                   id="password" 
-                  v-model="loginData.password"
+                  v-model="loginData.bodyPassword"
                   class="bg-zinc-200 py-2 pl-8 rounded-md focus:bg-white peer focus:outline-primary transition-colors"
                   placeholder="Password"
                   autocomplete="current-password"
@@ -84,7 +92,7 @@ async function login() {
                   class="absolute left-2 top-1/2 text-lg -translate-y-1/2 text-zinc-600 peer-focus:text-primary transition-colors" 
                 />
             </div>
-            <UiPrimaryButtonVue text="Log In" @click="login" />
+            <UiPrimaryButtonVue text="Log In" @click="login" :pending="pending" />
         </form>
         <UiAlertVue v-if="showAlert" :message="errorMessage" :show-alert="showAlert" />
     </div>

@@ -1,9 +1,13 @@
 <script lang="ts" setup>
 import ContactsVue from './ContactsVue.vue';
 import { toggleNav, useNavStore } from '~/stores/useNavStore';
+import logout from '~/utils/logout';
+import { useCurrentUserStore } from '#imports';
 
 const isActive = useNavStore();
+const currentUser = useCurrentUserStore();
 
+const nickname = computed(() => currentUser.user.nickname);
 
 </script>
 
@@ -41,12 +45,31 @@ const isActive = useNavStore();
           :class="['bg-white absolute w-full top-[70px] z-10 md:block', isActive ? 'block' : 'hidden']" 
           @hide-nav="toggleNav"
         />
-        <NuxtLink 
-          to="/auth/signup" 
-          class="absolute w-full bottom-4 left-4 text-primary flex items-center justify-center gap-2 text-xl transition-colors hover:text-primary-dark"
+        <div class="absolute w-full px-6 bottom-6 flex justify-between items-center">
+          <NuxtLink :to="{path: `/profile/${nickname}`}"
+          @click="toggleNav"
+          class="text-primary flex items-center justify-center gap-2 text-xl transition-colors hover:text-primary-dark"
         >
-          Log Out
-          <Icon name="material-symbols:login" class="text-2xl" />
+          <span class="md:hidden xl:block">
+            Profile
+          </span>
+          
+          <Icon 
+            name="material-symbols:person-outline" 
+            class="text-2xl" 
+          />
         </NuxtLink>
+        <button 
+          @click="logout"
+          class="text-primary flex items-center justify-center gap-2 text-xl transition-colors hover:text-primary-dark"
+        >
+        <span class="md:hidden xl:block">
+          Log Out
+        </span>
+          
+          <Icon name="material-symbols:login" class="text-2xl" />
+        </button>
+        </div>
+        
     </header>
 </template>

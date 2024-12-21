@@ -47,7 +47,7 @@ export const users: User[] = [
         id: 1,
         name: 'Conor McGregor',
         nickname: '@thenotorious',
-        password: '12345'
+        password: 'password1'
     },{
         id: 2,
         name: 'Bruce Lee',

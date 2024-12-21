@@ -1,17 +1,15 @@
-import { contacts } from "~/server/placeholder-data";
+// import { contacts } from "~/server/placeholder-data";
+import prisma from "~/lib/prisma";
 
 export default defineEventHandler(async (event) => {
 
-    const {exclude} = getQuery(event);
-
-    
-
-    if(exclude) {
-        return await contacts.filter(contact => 
-            contact.nickname != exclude
-        );
-    }
-
-    return await contacts;
-
+    const contacts = await prisma.user.findMany({
+        select: {
+            id: true,
+            name: true,
+            nickname: true,
+            avatar: true
+        }
+    });
+    return contacts;
 });

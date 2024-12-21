@@ -4,7 +4,7 @@ import { websocketUrl } from '~/constants';
 import type { Message } from '~/types';
 import { getTimeFromIsoString } from '~/utils/getTime';
 
-const props = defineProps<{messages: Message[] | [], user_nickname: string}>();
+const props = defineProps<{messages: Message[] | [], user_nickname: string | null}>();
 const messages = ref<Message[]>([]);
 const message = ref('');
 const messagesRef = useTemplateRef('messageRef');
@@ -94,8 +94,6 @@ function resizeTextarea() {
   textareaRef.value.style.maxHeight = textareaRef.value.scrollHeight + 'px';
   textareaRef.value.style.height = textareaRef.value.scrollHeight + 'px';
   
-  
-    
 }
 
 </script>
@@ -104,11 +102,11 @@ function resizeTextarea() {
     <div class="relative h-full">
 
       <div v-if="messages.length > 0" class="messages relative max-h-full overflow-scroll scroll-smooth" ref="messageRef">
-        <div class="px-12 py-[110px] ">
+        <div class="px-4 md:px-12 py-[110px] ">
           <TransitionGroup name="chat">
             <div
             v-for="message in messages" :key="message.id"
-            :class="['max-w-[40%] bg-zinc-700 py-2 px-4 text-white w-fit rounded-md message mb-4 break-all',
+            :class="['lg:max-w-[40%] bg-zinc-700 py-2 px-4 text-white w-fit rounded-md message mb-4 break-all',
               {
                 'message_from ml-auto': message.from_user_nickname == user_nickname,
                 'message_to mr-auto': message.from_user_nickname != user_nickname
